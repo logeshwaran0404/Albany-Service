@@ -1,75 +1,55 @@
 package com.albany.vsm.config;
 
+import com.albany.vsm.security.OAuth2AuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.albany.vsm.security.CustomOAuth2UserService;
-import com.albany.vsm.security.CustomOidcUserService;
-import com.albany.vsm.security.OtpAuthenticationFilter;
-import com.albany.vsm.security.OAuth2AuthenticationSuccessHandler;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.cache.CacheManager;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableCaching
 public class SecurityConfig {
 
     @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
-
-    @Autowired
-    private CustomOidcUserService customOidcUserService;
-
-    @Autowired
-    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-
-    @Autowired
-    private OtpAuthenticationFilter otpAuthenticationFilter;
+    private OAuth2AuthenticationFilter oAuth2AuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // Public endpoints that don't require authentication
-                        .requestMatchers("/api/auth/**", "/oauth2/**").permitAll()
-                        .requestMatchers("/api/public/**").permitAll()
-                        // Role-based access control
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/serviceadvisor/**").hasRole("SERVICEADVISOR")
-                        .requestMatchers("/api/customer/**").hasRole("CUSTOMER")
-                        // Secure all other endpoints
+                        // Public endpoints
+                        .requestMatchers("/api/auth/register/**").permitAll()
+                        .requestMatchers("/api/auth/login/**").permitAll()
+                        // Restricted endpoints
+                        .requestMatchers("/api/customer/**").hasRole("customer")
+                        .requestMatchers("/api/admin/**").hasRole("admin")
+                        .requestMatchers("/api/serviceadvisor/**").hasRole("serviceadvisor")
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService)
-                                .oidcUserService(customOidcUserService)
-                        )
-                        .successHandler(oAuth2AuthenticationSuccessHandler)
-                )
-                .addFilterBefore(otpAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(oAuth2AuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager("otpCache");
     }
 }
