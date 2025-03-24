@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoServe - User Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #722F38;
+            --primary-light: #8C4049;
+            --secondary: #EFDEBB;
+            --secondary-dark: #DAC9A6;
+            --white: #FFFFFF;
+            --light-gray: #F5F5F5;
+            --medium-gray: #E0E0E0;
+            --dark-gray: #333333;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --info: #2196F3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #EFDEBB;
+            color: var(--dark-gray);
+        }
+
+        .header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-links a:last-child {
+            background-color: var(--secondary);
+            color: var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            color: var(--primary);
+            margin-bottom: 2rem;
+            font-weight: 600;
+            font-size: 2rem;
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            background: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-sidebar {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .profile-avatar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid var(--secondary);
+        }
+
+        .avatar-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .change-avatar {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: var(--secondary);
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .change-avatar:hover {
+            background-color: var(--secondary-dark);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .membership-status {
+            background-color: var(--secondary);
+            color: var(--primary);
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .profile-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 6px;
+            color: var(--white);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item.active {
+            background-color: var(--secondary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .profile-content {
+            padding: 2rem;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .content-header span {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .content-body {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-success {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid var(--success);
+            color: var(--success);
+        }
+
+        .alert-info {
+            background-color: rgba(33, 150, 243, 0.1);
+            border-left: 4px solid var(--info);
+            color: var(--info);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(114, 47, 56, 0.2);
+        }
+
+        .form-control:disabled {
+            background-color: var(--light-gray);
+            cursor: not-allowed;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid currentColor;
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(114, 47, 56, 0.1);
+        }
+
+        .service-status {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .vehicle-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .vehicle-card {
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .vehicle-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .vehicle-header {
+            padding: 1rem;
+            background-color: var(--primary);
+            color: var(--white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .vehicle-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .in-progress {
+            background-color: var(--warning);
+            color: var(--dark-gray);
+        }
+
+        .completed {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .awaiting {
+            background-color: var(--info);
+            color: var(--white);
+        }
+
+        .vehicle-details {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .detail-label {
+            color: var(--dark-gray);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-weight: 600;
+        }
+
+        .progress-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 1rem 0;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background-color: var(--medium-gray);
+            z-index: 1;
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--medium-gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--white);
+            position: relative;
+            z-index: 2;
+        }
+
+        .step.completed .step-icon {
+            background-color: var(--success);
+        }
+
+        .step.current .step-icon {
+            background-color: var(--warning);
+        }
+
+        .step-label {
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .history-item {
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .history-header {
+            background-color: var(--light-gray);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-body {
+            padding: 1rem;
+        }
+
+        .service-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .service-list {
+            margin-top: 1rem;
+        }
+
+        .service-list-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .service-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Vehicle Section Styles */
+        .vehicles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .vehicle-item {
+            border: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .vehicle-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .vehicle-image {
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .vehicle-info {
+            padding: 1rem;
+        }
+
+        .add-vehicle-card {
+            border: 2px dashed var(--medium-gray);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .add-vehicle-card:hover {
+            border-color: var(--primary);
+            background-color: rgba(114, 47, 56, 0.05);
+        }
+
+        .add-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-container {
+            background-color: var(--white);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark-gray);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .otp-input-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 1.5rem 0;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 60px;
+            border: 1px solid var(--medium-gray);
+            border-radius: 4px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(114, 47, 56, 0.2);
+        }
+
+        .resend-otp {
+            text-align: right;
+            margin-top: 1rem;
+        }
+
+        .resend-otp a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .modal-footer {
+            padding: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            border-top: 1px solid var(--medium-gray);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-sidebar {
+                padding: 1.5rem;
+            }
+
+            .profile-menu {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .menu-item {
+                padding: 0.75rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .nav-links a span {
+                display: none;
+            }
+
+            .profile-menu {
+                gap: 0.25rem;
+            }
+            
+            .menu-item {
+                padding: 0.5rem;
+            }
+
+            .menu-item span {
+                display: none;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-steps {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .step::after {
+                width: 2px;
+                height: 100%;
+                top: 15px;
+                left: 15px;
+                right: auto;
+            }
+        }
+
+        /* Animation Classes */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        /* Tooltip Styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: var(--dark-gray);
+            color: var(--white);
+            text-align: center;
+            border-radius: 4px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Invoices Tab Styles */
+        .invoice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .invoice-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--medium-gray);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .invoice-item:hover {
+            background-color: var(--light-gray);
+        }
+        
+        .invoice-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .invoice-id {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .invoice-date, .invoice-amount {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+        
+        .invoice-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .icon-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .icon-button:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">AutoServe</div>
+        <div class="nav-links">
+            <a href="#"><i class="fas fa-home"></i> <span>Home</span></a>
+            <a href="#"><i class="fas fa-car-alt"></i> <span>Services</span></a>
+            <a href="#"><i class="fas fa-info-circle"></i> <span>About</span></a>
+            <a href="#"><i class="fas fa-phone"></i> <span>Contact</span></a>
+            <a href="#"><i class="fas fa-user"></i></a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <h1 class="page-title">Your Profile</h1>
+        
+        <div class="profile-grid">
+            <!-- Sidebar -->
+            <div class="profile-sidebar">
+                <div class="profile-avatar">
+                    <div id="profileAvatarWrapper" class="avatar-wrapper">
+                        <img src="/api/placeholder/300/300" alt="User Avatar">
+                        <div class="change-avatar" onclick="openAvatarModal()">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <div class="profile-name">John Smith</div>
+                    <div class="membership-status">Premium Member</div>
+                </div>
+                
+                <div class="profile-menu">
+                    <a href="#" class="menu-item active" onclick="showTab('profile')">
+                        <i class="fas fa-user"></i>
+                        <span>Profile Information</span>
+                    </a>
+                    <a href="#" class="menu-item" onclick="showTab('services')">
+                        <i class="fas fa-car"></i>
+                        <span>Current Services</span>
+                    </a>
+                    <a href="#" class="menu-item" onclick="showTab('history')">
+                        <i class="fas fa-history"></i>
+                        <span>Service History</span>
+                    </a>
+                    <a href="#" class="menu-item" onclick="showTab('invoices')">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Invoices</span>
+                    </a>
+                    <a href="#" class="menu-item" onclick="showTab('vehicles')">
+                        <i class="fas fa-car-alt"></i>
+                        <span>Your Vehicles</span>
+                    </a>
+                    <a href="#" class="menu-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="profile-content">
+                <!-- Profile Tab -->
+                <div class="tab-content active" id="profile-tab">
+                    <div class="content-header">
+                        <span>Profile Information</span>
+                    </div>
+                    <div class="content-body">
+                        <!-- <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> Your profile was last updated on March 20, 2025
+                        </div> -->
+                        
+                        <h3 class="section-title">Personal Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" value="John">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" value="Smith">
+                            </div>
+                        </div>
+                        
+                        <h3 class="section-title">Contact Information <button class="btn btn-outline btn-sm" onclick="openVerifyModal('email')">Update Email</button></h3>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" value="john.smith@example.com" disabled>
+                        </div>
+                        
+                        <div class="section-title">Phone Number <button class="btn btn-outline btn-sm" onclick="openVerifyModal('phone')">Update Phone</button></div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" value="+1 (555) 123-4567" disabled>
+                        </div>
+                        
+                        <h3 class="section-title">Address Information</h3>
+                        <div class="form-group">
+                            <label class="form-label">Street Address</label>
+                            <input type="text" class="form-control" value="123 Main Street">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" value="Anytown">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">State</label>
+                                <input type="text" class="form-control" value="California">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ZIP Code</label>
+                                <input type="text" class="form-control" value="90210">
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: right; margin-top: 2rem;">
+                            <button class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Current Services Tab -->
+                <div class="tab-content" id="services-tab">
+                    <div class="content-header">
+                        <span>Current Services</span>
+                    </div>
+                    <div class="content-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Track your vehicle's service status in real-time
+                        </div>
+                        
+                        <div class="service-status">
+                            <div class="status-header">
+                                <div class="status-title">Your Vehicles in Service</div>
+                            </div>
+                            
+                            <div class="vehicle-status">
+                                <div class="vehicle-card">
+                                    <div class="vehicle-header">
+                                        <div class="vehicle-name">Tesla Model 3</div>
+                                        <div class="status-badge in-progress">In Progress</div>
+                                    </div>
+                                    <div class="vehicle-details">
+                                        <div class="detail-row">
+                                            <div class="detail-label">Service Type</div>
+                                            <div class="detail-value">Full Maintenance</div>
+                                        </div>
+                                        <div class="detail-row">
+                                            <div class="detail-label">Drop-off Date</div>
+                                            <div class="detail-value">Mar 22, 2025</div>
+                                        </div>
+                                        <div class="detail-row">
+                                            <div class="detail-label">Estimated Pickup</div>
+                                            <div class="detail-value">Mar 24, 2025</div>
+                                        </div>
+                                        <div class="progress-steps">
+                                            <div class="step completed">
+                                                <div class="step-icon"><i class="fas fa-check"></i></div>
+                                                <div class="step-label">Received</div>
+                                            </div>
+                                            <div class="step completed">
+                                                <div class="step-icon"><i class="fas fa-check"></i></div>
+                                                <div class="step-label">Diagnostic</div>
+                                            </div>
+                                            <div class="step current">
+                                                <div class="step-icon"><i class="fas fa-wrench"></i></div>
+                                                <div class="step-label">Repair</div>
+                                            </div>
+                                            <div class="step">
+                                                <div class="step-icon"><i class="fas fa-flag-checkered"></i></div>
+                                                <div class="step-label">Completed</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Service History Tab -->
+                <div class="tab-content" id="history-tab">
+                    <div class="content-header">
+                        <span>Service History</span>
+                    </div>
+                    <div class="content-body">
+                        <div class="history-list">
+                            <div class="history-item">
+                                <div class="history-header">
+                                    <div class="vehicle-name">Toyota Camry</div>
+                                    <div class="status-badge completed">Completed</div>
+                                </div>
+                                <div class="history-body">
+                                    <div class="service-details">
+                                        <div class="detail-row">
+                                            <div class="detail-label">Service Date</div>
+                                            <div class="detail-value">Jan 15, 2025</div>
+                                        </div>
+                                        <div class="detail-row">
+                                            <div class="detail-label">Service Type</div>
+                                            <div class="detail-value">Oil Change & Inspection</div>
+                                        </div>
+                                        <div class="detail-row">
+                                            <div class="detail-label">Total Cost</div>
+                                            <div class="detail-value">$157.50</div>
+                                        </div>
+                                    </div>
+                                    <div class="service-list">
+                                        <div class="service-list-item">
+                                            <span>Engine Oil Replacement</span>
+                                            <span>$45.00</span>
+                                        </div>
+                                        <div class="service-list-item">
+                                            <span>Oil Filter</span>
+                                            <span>$15.50</span>
+                                        </div>
+                                        <div class="service-list-item">
+                                            <span>Comprehensive Vehicle Inspection</span>
+                                            <span>$97.00</span>
+                                        </div>
+                                    </div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-outline btn-sm">View Details</button>
+                                        <button class="btn btn-primary btn-sm">Download Invoice</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="history-item">
+                                <div class="history-header">
+                                    <div class="vehicle-name">Honda Civic</div>
+                                    <div class="status-badge completed">Completed</div>
+                                </div>
+                                <div class="history-body">
+                                    <div class="service-details">
+                                        <div class="detail-row">
+                                            <div class="detail-label">Service Date</div>
+                                            <div class="detail-value">Dec 5, 2024</div>
+                                        </div>
+                                        <div class="detail-row">
+                                            <div class="detail-label">Service Type</div>
+                                            <div class="detail-value">Brake System Service</div>
+                                        </div>
+                                        <div class="detail-row">
+                                            <div class="detail-label">Total Cost</div>
+                                            <div class="detail-value">$345.75</div>
+                                        </div>
+                                    </div>
+                                    <div class="service-list">
+                                        <div class="service-list-item">
+                                            <span>Brake Pad Replacement</span>
+                                            <span>$220.00</span>
+                                        </div>
+                                        <div class="service-list-item">
+                                            <span>Brake Fluid Flush</span>
+                                            <span>$85.75</span>
+                                        </div>
+                                        <div class="service-list-item">
+                                            <span>Rotor Inspection</span>
+                                            <span>$40.00</span>
+                                        </div>
+                                    </div>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-outline btn-sm">View Details</button>
+                                        <button class="btn btn-primary btn-sm">Download Invoice</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Invoices Tab -->
+                <div class="tab-content" id="invoices-tab">
+                    <div class="content-header">
+                        <span>Invoices</span>
+                    </div>
+                    <div class="content-body">
+                        <div class="invoice-list">
+                            <div class="invoice-item">
+                                <div class="invoice-details">
+                                    <div class="invoice-id">#INV-2025-0315</div>
+                                    <div class="invoice-date">March 22, 2025</div>
+                                    <div class="invoice-amount">$487.50</div>
+                                </div>
+                                <div class="invoice-actions">
+                                    <button class="icon-button" title="View Invoice">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="icon-button" title="Download Invoice">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="icon-button" title="Print Invoice">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="invoice-item">
+                                <div class="invoice-details">
+                                    <div class="invoice-id">#INV-2025-0214</div>
+                                    <div class="invoice-date">February 14, 2025</div>
+                                    <div class="invoice-amount">$157.50</div>
+                                </div>
+                                <div class="invoice-actions">
+                                    <button class="icon-button" title="View Invoice">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="icon-button" title="Download Invoice">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="icon-button" title="Print Invoice">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Vehicles Tab -->
+                <div class="tab-content" id="vehicles-tab">
+                    <div class="content-header">
+                        <span>Your Vehicles</span>
+                    </div>
+                    <div class="content-body">
+                        <div class="vehicles-grid">
+                            <div class="vehicle-item">
+                                <div class="vehicle-image">
+                                    <img src="/api/placeholder/400/250" alt="Tesla Model 3">
+                                </div>
+                                <div class="vehicle-info">
+                                    <h4>Tesla Model 3</h4>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Registration</div>
+                                        <div class="detail-value">ABC-1234</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Year</div>
+                                        <div class="detail-value">2022</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Mileage</div>
+                                        <div class="detail-value">22,500 miles</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="vehicle-item">
+                                <div class="vehicle-image">
+                                    <img src="/api/placeholder/400/250" alt="Toyota Camry">
+                                </div>
+                                <div class="vehicle-info">
+                                    <h4>Toyota Camry</h4>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Registration</div>
+                                        <div class="detail-value">XYZ-5678</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Year</div>
+                                        <div class="detail-value">2020</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Mileage</div>
+                                        <div class="detail-value">45,200 miles</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="add-vehicle-card" onclick="openAddVehicleModal()">
+                                <div class="add-icon">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                                <div>Add New Vehicle</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Avatar Selection Modal -->
+    <div class="modal-overlay" id="avatarModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title">Choose Avatar</div>
+                <button class="modal-close" onclick="closeModal('avatarModal')" aria-label="Close Avatar Modal">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- Avatar Selection Content Goes Here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- OTP Verification Modal -->
+    <div class="modal-overlay" id="otpModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title">Verify OTP</div>
+                <button class="modal-close" onclick="closeModal('otpModal')" aria-label="Close OTP Modal">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Enter the 6-digit verification code sent to your <span id="verificationChannel"></span></p>
+                <div class="otp-input-container">
+                    <input type="text" maxlength="1" class="otp-input">
+                    <input type="text" maxlength="1" class="otp-input">
+                    <input type="text" maxlength="1" class="otp-input">
+                    <input type="text" maxlength="1" class="otp-input">
+                    <input type="text" maxlength="1" class="otp-input">
+                    <input type="text" maxlength="1" class="otp-input">
+                </div>
+                <div class="resend-otp">
+                    <a href="#">Resend OTP</a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('otpModal')">Cancel</button>
+                <button class="btn btn-primary">Verify</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Hide all menu items
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+
+            // Highlight selected menu item
+            const activeMenuItem = document.querySelector(`.menu-item[onclick="showTab('${tabName}')"]`);
+            activeMenuItem.classList.add('active');
+        }
+
+        function openAvatarModal() {
+            document.getElementById('avatarModal').classList.add('active');
+        }
+
+        function openVerifyModal(channel) {
+            document.getElementById('verificationChannel').textContent = channel;
+            document.getElementById('otpModal').classList.add('active');
+        }
+
+        function openAddVehicleModal() {
+            // Placeholder for add vehicle modal functionality
+            alert('Add Vehicle Modal - To be implemented');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // OTP Input Auto Focus
+        const otpInputs = document.querySelectorAll('.otp-input');
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
