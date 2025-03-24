@@ -1,53 +1,51 @@
 package com.albany.vsm.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(name = "email", nullable = false, length = 100, unique = true)
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(name = "mobile_number", length = 15, unique = true)
+    @Column(unique = true, length = 15)
     private String mobileNumber;
 
-    @Column(name = "password", nullable = false, length = 255)
-    private String password;
+    @Column(nullable = false, length = 255)
+    private String password; // Will be "N/A" for OTP-based customers
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private UserRole role;
+    private Role role;
 
-    @Column(name = "created_at")
+    @Column(nullable = false)
+    private boolean isActive = false; // Will be activated after OTP verification
+
+    @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-
-    // For customers registering via mobile, we'll set a default secure password
-    public void setDefaultPassword() {
-        // BCrypt will be applied at the service layer
-        this.password = "DefaultSecurePassword" + System.currentTimeMillis();
-    }
-
-    public enum UserRole {
-        admin, serviceadvisor, customer
+    // Enum for user roles
+    public enum Role {
+        admin,
+        serviceadvisor,
+        customer
     }
 }

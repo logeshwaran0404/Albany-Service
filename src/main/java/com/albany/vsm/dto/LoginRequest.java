@@ -9,13 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OtpVerificationRequest {
+public class LoginRequest {
     
     @NotBlank(message = "Mobile number is required")
     @Pattern(regexp = "^[0-9]{10}$", message = "Mobile number must be 10 digits")
     private String mobileNumber;
-    
-    @NotBlank(message = "OTP is required")
-    @Pattern(regexp = "^[0-9]{4}$", message = "OTP must be 4 digits")
-    private String otp;
 }

@@ -1,111 +1,146 @@
 package com.albany.vsm.controller;
 
-import com.albany.vsm.dto.*;
-import com.albany.vsm.model.User;
-import com.albany.vsm.service.AuthenticationService;
-import com.albany.vsm.service.OAuthService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.albany.vsm.dto.ApiResponse;
+import com.albany.vsm.dto.LoginRequest;
+import com.albany.vsm.dto.OtpVerificationRequest;
+import com.albany.vsm.dto.RegistrationRequest;
+import com.albany.vsm.exception.OtpExpiredException;
+import com.albany.vsm.exception.OtpInvalidException;
+import com.albany.vsm.exception.UserAlreadyExistsException;
+import com.albany.vsm.exception.UserNotFoundException;
+import com.albany.vsm.service.OtpService;
+import com.albany.vsm.service.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationService authenticationService;
-
-    @Value("${oauth.token.validity.seconds:3600}")
-    private long tokenValiditySeconds;
-
-    @Autowired
-    public AuthController(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
+    private final UserService userService;
+    private final OtpService otpService;
 
     /**
-     * Initiate registration by sending OTP
+     * Register a new customer
      */
-    @PostMapping("/register/initiate")
-    public ResponseEntity<ApiResponse<Void>> initiateRegistration(
-            @Valid @RequestBody RegistrationRequest request) {
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse> registerCustomer(@Valid @RequestBody RegistrationRequest request) {
+        try {
+            userService.registerCustomer(request);
 
-        boolean otpSent = authenticationService.initiateRegistration(request);
+            // Generate and send OTP for verification
+            String otp = otpService.generateAndSendOtp(request.getMobileNumber());
 
-        if (otpSent) {
-            return ResponseEntity.ok(ApiResponse.success(
-                    "OTP sent to mobile number. Please verify to complete registration."));
-        } else {
-            return ResponseEntity.internalServerError().body(
-                    ApiResponse.error("Failed to send OTP. Please try again."));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse(true, "Customer registered successfully. OTP sent to your mobile number."));
+        } catch (UserAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ApiResponse(false, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(false, "Registration failed: " + e.getMessage()));
         }
     }
 
     /**
-     * Complete registration with OTP verification
+     * Verify OTP for customer registration
      */
-    @PostMapping("/register/complete")
-    public ResponseEntity<ApiResponse<TokenResponse>> completeRegistration(
-            @Valid @RequestBody OtpVerificationRequest request) {
+    @PostMapping("/verify-registration")
+    public ResponseEntity<ApiResponse> verifyRegistrationOtp(@Valid @RequestBody OtpVerificationRequest request) {
+        try {
+            otpService.verifyOtp(request.getMobileNumber(), request.getOtp());
+            userService.activateCustomer(request.getMobileNumber());
 
-        User user = authenticationService.completeRegistration(request);
-        String token = authenticationService.completeLogin(request);
-
-        TokenResponse tokenResponse = new TokenResponse(token, tokenValiditySeconds);
-
-        return ResponseEntity.ok(ApiResponse.success(
-                "Registration successful", tokenResponse));
-    }
-
-    /**
-     * Initiate login by sending OTP
-     */
-    @PostMapping("/login/initiate")
-    public ResponseEntity<ApiResponse<Void>> initiateLogin(
-            @Valid @RequestBody OtpRequest request) {
-
-        boolean otpSent = authenticationService.initiateLogin(request);
-
-        if (otpSent) {
-            return ResponseEntity.ok(ApiResponse.success(
-                    "OTP sent to mobile number. Please verify to login."));
-        } else {
-            return ResponseEntity.internalServerError().body(
-                    ApiResponse.error("Failed to send OTP. Please try again."));
+            return ResponseEntity.ok(new ApiResponse(true, "Account verified successfully"));
+        } catch (OtpInvalidException | OtpExpiredException | UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse(false, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(false, "Verification failed: " + e.getMessage()));
         }
     }
 
     /**
-     * Complete login with OTP verification
+     * Login with mobile number (sends OTP)
      */
-    @PostMapping("/login/complete")
-    public ResponseEntity<ApiResponse<TokenResponse>> completeLogin(
-            @Valid @RequestBody OtpVerificationRequest request) {
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request) {
+        try {
+            // Generate and send OTP for login
+            String otp = otpService.generateAndSendOtp(request.getMobileNumber());
 
-        String token = authenticationService.completeLogin(request);
-
-        TokenResponse tokenResponse = new TokenResponse(token, tokenValiditySeconds);
-
-        return ResponseEntity.ok(ApiResponse.success(
-                "Login successful", tokenResponse));
+            return ResponseEntity.ok(new ApiResponse(true, "OTP sent to your mobile number"));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse(false, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(false, "Failed to send OTP: " + e.getMessage()));
+        }
     }
 
     /**
-     * Logout - revoke token
+     * Verify OTP for login
      */
-    @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<Void>> logout(
-            @RequestHeader("Authorization") String authHeader) {
+    @PostMapping("/verify-login")
+    public ResponseEntity<ApiResponse> verifyLoginOtp(@Valid @RequestBody OtpVerificationRequest request) {
+        try {
+            otpService.verifyOtp(request.getMobileNumber(), request.getOtp());
 
-        // Extract token from Authorization header
-        String token = authHeader.replace("Bearer ", "");
+            // Generate session token
+            String token = userService.generateSessionToken(request.getMobileNumber());
 
-        // Revoke token logic would be called here
-        // oAuthService.revokeToken(token);
+            Map<String, Object> data = new HashMap<>();
+            data.put("token", token);
 
-        return ResponseEntity.ok(ApiResponse.success("Logout successful"));
+            return ResponseEntity.ok(new ApiResponse(true, "Login successful", data));
+        } catch (OtpInvalidException | OtpExpiredException | UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse(false, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(false, "Login failed: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Resend OTP
+     */
+    @PostMapping("/resend-otp")
+    public ResponseEntity<ApiResponse> resendOtp(@Valid @RequestBody LoginRequest request) {
+        try {
+            // Generate and send a new OTP
+            String otp = otpService.generateAndSendOtp(request.getMobileNumber());
+
+            return ResponseEntity.ok(new ApiResponse(true, "New OTP sent to your mobile number"));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse(false, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(false, "Failed to send OTP: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Test endpoint to check if Twilio is configured properly
+     * Should be removed or secured in production
+     */
+    @GetMapping("/test-sms")
+    public ResponseEntity<ApiResponse> testSmsConfiguration() {
+        try {
+            return ResponseEntity.ok(new ApiResponse(true, "SMS configuration is ready for testing. Use the registration or login endpoints to test actual OTP sending."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(false, "SMS configuration test failed: " + e.getMessage()));
+        }
     }
 }
