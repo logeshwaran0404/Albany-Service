@@ -1,0 +1,94 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.glassmorphic {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.navbar {
+    background-color: #722F38 !important;
+}
+
+.navbar .nav-link, .navbar .btn-outline-light {
+    color: #EFDEBB;
+    transition: color 0.3s ease;
+}
+
+.navbar .nav-link:hover, .navbar .btn-outline-light:hover {
+    color: #fff;
+}
+
+.btn-book {
+    background-color: #EFDEBB;
+    color: #722F38;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-book:hover {
+    background-color: #fff;
+    color: #722F38;
+}
+
+.hero-section {
+    height: 100vh;
+    background: url('service-center.jpg') no-repeat center center/cover;
+    position: relative;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(114, 47, 56, 0.5);
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.animate-text {
+    animation: fadeInUp 1s ease-in-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.glassmorphic-form {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.service-card {
+    padding: 2rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+footer {
+    background-color: #722F38;
+}
