@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Advisor Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #f4f6f9;
+            --glass-background: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.125);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--glass-background);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--glass-border);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .sidebar-logo img {
+            width: 50px;
+            margin-right: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(10px);
+        }
+
+        .sidebar-menu a i {
+            margin-right: 10px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            background: var(--glass-background);
+            backdrop-filter: blur(15px);
+            overflow-y: auto;
+        }
+
+        .glass-card {
+            background: var(--glass-background);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .vehicle-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .vehicle-table th {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .vehicle-table td {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            padding: 12px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-in-progress {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .status-pending {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .service-checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .service-checklist li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .service-checklist li input {
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="https://via.placeholder.com/50" alt="Logo">
+                <h3>Service Hub</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fas fa-car"></i> Vehicles</a></li>
+                <li><a href="#"><i class="fas fa-clipboard-list"></i> Service Checklist</a></li>
+                <li><a href="#"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="glass-card">
+                <h2 class="mb-4 text-white">Assigned Vehicles</h2>
+                <div class="table-responsive">
+                    <table class="vehicle-table">
+                        <thead>
+                            <tr>
+                                <th>Registration</th>
+                                <th>Customer</th>
+                                <th>Vehicle</th>
+                                <th>Service Due</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>MH01AB1234</td>
+                                <td>John Doe</td>
+                                <td>Toyota Camry</td>
+                                <td>15 Apr 2024</td>
+                                <td>
+                                    <span class="status-badge status-in-progress">In Progress</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-light">View Details</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>MH02CD5678</td>
+                                <td>Jane Smith</td>
+                                <td>Honda Civic</td>
+                                <td>10 Apr 2024</td>
+                                <td>
+                                    <span class="status-badge status-pending">Pending</span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-light">View Details</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="glass-card">
+                        <h4 class="text-white mb-3">Service Checklist</h4>
+                        <ul class="service-checklist">
+                            <li>
+                                <input type="checkbox" id="task1">
+                                <label for="task1" class="text-white">Initial Vehicle Inspection</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="task2">
+                                <label for="task2" class="text-white">Engine Oil Check</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="task3">
+                                <label for="task3" class="text-white">Brake System Inspection</label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="glass-card">
+                        <h4 class="text-white mb-3">Quick Stats</h4>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="text-white">
+                                    <h5>3</h5>
+                                    <p>Vehicles In Progress</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-white">
+                                    <h5>2</h5>
+                                    <p>Pending Vehicles</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</body>
+</html>
