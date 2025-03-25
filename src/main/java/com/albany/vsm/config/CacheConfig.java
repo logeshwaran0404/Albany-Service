@@ -1,12 +1,14 @@
 package com.albany.vsm.config;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
+
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Configuration for cache management
@@ -14,34 +16,24 @@ import org.springframework.scheduling.annotation.Scheduled;
  */
 @Configuration
 @EnableCaching
-@EnableScheduling
 public class CacheConfig {
 
     /**
-     * Cache manager for OTP and registration data storage
+     * Create and configure the cache manager for OTP and registration caches
      */
     @Bean
     public CacheManager cacheManager() {
-        ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager(
-                "otpCache",
-                "registrationCache"
-        );
+        CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+        
+        // Set cache names
+        cacheManager.setCacheNames(Arrays.asList("otpCache", "registrationCache"));
+        
+        // Configure Caffeine
+        cacheManager.setCaffeine(Caffeine.newBuilder()
+                .expireAfterWrite(5, TimeUnit.MINUTES)
+                .initialCapacity(100)
+                .maximumSize(1000));
+        
         return cacheManager;
-    }
-
-    /**
-     * Schedule a task to clear the OTP cache every 5 minutes
-     * This simulates expiration since ConcurrentMapCache doesn't support TTL
-     */
-    @Scheduled(fixedRate = 300000) // 5 minutes in milliseconds
-    public void evictExpiredOtps() {
-        // This will clear the entire cache every 5 minutes
-        CacheManager manager = cacheManager();
-        if (manager.getCache("otpCache") != null) {
-            manager.getCache("otpCache").clear();
-        }
-        if (manager.getCache("registrationCache") != null) {
-            manager.getCache("registrationCache").clear();
-        }
     }
 }

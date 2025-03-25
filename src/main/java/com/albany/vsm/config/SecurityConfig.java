@@ -8,8 +8,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * Security configuration
- * For simplicity, we're disabling CSRF and allowing all requests
- * In a production environment, set up proper security rules
+ * Disables default security login and allows all requests
  */
 @Configuration
 @EnableWebSecurity
@@ -19,6 +18,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())  // Disable CSRF protection for API
+            .formLogin(form -> form.disable())  // Disable the default login form completely
+            .httpBasic(basic -> basic.disable())  // Disable HTTP Basic
             .authorizeHttpRequests(authorize -> authorize
                 .anyRequest().permitAll()  // Allow all requests without authentication
             );
