@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -22,30 +21,31 @@ public class User {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String email;
 
-    @Column(unique = true, length = 15)
+    @Column(name = "mobile_number", length = 15, unique = true)
     private String mobileNumber;
 
-    @Column(nullable = false, length = 255)
-    private String password; // Will be "N/A" for OTP-based customers
-
     @Column(nullable = false)
+    private String password;
+
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
-    @Column(nullable = false)
-    private boolean isActive = false; // Will be activated after OTP verification
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
 
-    @CreationTimestamp
-    @Column(updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // Enum for user roles
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
     public enum Role {
-        admin,
-        serviceadvisor,
-        customer
+        admin, serviceadvisor, customer
     }
 }

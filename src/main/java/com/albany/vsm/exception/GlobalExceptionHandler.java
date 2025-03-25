@@ -1,56 +1,62 @@
 package com.albany.vsm.exception;
 
-import com.albany.vsm.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
-import java.util.HashMap;
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-@RestControllerAdvice
+/**
+ * Global exception handler for the application
+ */
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiResponse handleUserAlreadyExistsException(UserAlreadyExistsException ex) {
-        return new ApiResponse(false, ex.getMessage());
+    /**
+     * Handle OTP-related exceptions
+     */
+    @ExceptionHandler(OtpException.class)
+    public ResponseEntity<Object> handleOtpException(OtpException ex, WebRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+        
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        
+        if (ex instanceof OtpVerificationException) {
+            status = HttpStatus.BAD_REQUEST;
+        } else if (ex instanceof EmailSendingException) {
+            status = HttpStatus.SERVICE_UNAVAILABLE;
+        }
+        
+        return new ResponseEntity<>(body, status);
     }
-
+    
+    /**
+     * Handle user not found exception
+     */
     @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiResponse handleUserNotFoundException(UserNotFoundException ex) {
-        return new ApiResponse(false, ex.getMessage());
+    public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex, WebRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+        
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
-
-    @ExceptionHandler({OtpInvalidException.class, OtpExpiredException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiResponse handleOtpExceptions(RuntimeException ex) {
-        return new ApiResponse(false, ex.getMessage());
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-
-        return ResponseEntity.badRequest().body(
-                new ApiResponse(false, "Validation failed", errors)
-        );
-    }
-
+    
+    /**
+     * Handle all other exceptions
+     */
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiResponse handleGeneralException(Exception ex) {
-        return new ApiResponse(false, "An unexpected error occurred: " + ex.getMessage());
+    public ResponseEntity<Object> handleGlobalException(Exception ex, WebRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", "An unexpected error occurred: " + ex.getMessage());
+        
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
