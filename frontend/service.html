@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motors - Special Services</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ffc107;
+            --secondary-color: #6c757d;
+            --text-dark: #3B3B3B;
+            --hover-bg-color: #722F38;
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        /* Navigation Styles */
+        .navbar-brand img {
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover img {
+            transform: scale(1.1);
+        }
+
+        .nav-link {
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative; /* Added for icon positioning */
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            color: var(--text-dark);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative; /* Added for icon positioning */
+        }
+
+        .card:hover .card-body:not(.bg-warning) {
+            background-color: var(--hover-bg-color) !important;
+            color: white !important;
+        }
+
+        .card:hover .card-body:not(.bg-warning) .read-more {
+            color: white !important;
+        }
+
+        .card:hover .card-body:not(.bg-warning) .card-title,
+        .card:hover .card-body:not(.bg-warning) .card-text {
+            color: white !important;
+        }
+
+        .card-img-top {
+            object-fit: cover;
+            height: 250px;
+            width: 100%;
+        }
+
+        /* Icon Styles */
+        .card-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            opacity: 0.2;
+            transition: opacity 0.3s ease;
+            color: var(--secondary-color);
+        }
+
+        .card:hover .card-icon {
+            opacity: 0.8;
+        }
+
+        /* Decorative Lines */
+        .service-divider {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .yellow-line {
+            width: 3rem;
+            height: 0.25rem;
+            background-color: var(--primary-color);
+        }
+
+        .gray-line {
+            width: 1rem;
+            height: 0.25rem;
+            background-color: var(--secondary-color);
+        }
+
+        /* Hover Effects */
+        .read-more {
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .read-more:hover {
+            color: var(--primary-color) !important;
+        }
+    </style>
+</head>
+<body>
+    <main class="container py-5 px-4">
+        <div class="text-center mb-5">
+            <h1 class="fs-1 fw-bold">Our Special Services</h1>
+            <div class="service-divider mt-3">
+                <div class="yellow-line"></div>
+                <div class="gray-line mx-2"></div>
+                <div class="yellow-line"></div>
+            </div>
+            <p class="text-muted mt-3 mx-auto" style="max-width: 600px;">
+                Our car rental services, in the travel industry and business industry, stand apart for their quality and great taste.
+            </p>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col">
+                <div class="card h-100">
+                    <img src="https://storage.googleapis.com/a1aa/image/qeXQgoZta2LZpbDEZQ6Ikoonsf51F2aFAP6jB5dWbY0.jpg" class="card-img-top" alt="Engine Diagnostics">
+                    <div class="card-body">
+                        <i class="bi bi-tools card-icon"></i> <!-- Engine Diagnostics Icon -->
+                        <h2 class="card-title fs-4 fw-bold">Engine Diagnostics</h2>
+                        <p class="card-text text-muted">We are the assistance that assessments genuinely the issues with the vehicle.</p>
+                        <a href="#" class="read-more text-warning text-decoration-none">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <img src="https://storage.googleapis.com/a1aa/image/A_MYnPVc_9nkF-030DPDz7BEUz70c4FlWHwTYCWbbI0.jpg" class="card-img-top" alt="Oil and Filters">
+                    <div class="card-body">
+                        <i class="bi bi-droplet-fill card-icon"></i> <!-- Oil and Filters Icon -->
+                        <h2 class="card-title fs-4 fw-bold">Oil and Filters</h2>
+                        <p class="card-text">We are the assistance that assessments genuinely the issues with the vehicle.</p>
+                        <a href="#" class="read-more text-warning text-decoration-none">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <img src="https://storage.googleapis.com/a1aa/image/ldP3RT7rlzPcaoBXJZS2bau15syIh-s_qadZrGFa19U.jpg" class="card-img-top" alt="Brake Repair">
+                    <div class="card-body">
+                        <i class="bi bi-car-front-fill card-icon"></i> <!-- Brake Repair Icon -->
+                        <h2 class="card-title fs-4 fw-bold">Brake Repair</h2>
+                        <p class="card-text text-muted">We are the assistance that assessments genuinely the issues with the vehicle.</p>
+                        <a href="#" class="read-more text-warning text-decoration-none">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
