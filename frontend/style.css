@@ -161,7 +161,7 @@ body {
 @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
 
 .glassmorphic-form {
-    background: #EFDEBB; /* Solid background color instead of gradient */
+    background: #e6ddca; /* Solid background color instead of gradient */
     min-height: 100vh;
     display: flex;
     align-items: center;

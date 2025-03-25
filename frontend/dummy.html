@@ -1,204 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoServe - User Profile</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* CSS remains exactly the same as in the original document */
-        :root {
-            --primary: #722F38;
-            --primary-light: #8C4049;
-            --secondary: #EFDEBB;
-            --secondary-dark: #DAC9A6;
-            --white: #FFFFFF;
-            --light-gray: #F5F5F5;
-            --medium-gray: #E0E0E0;
-            --dark-gray: #333333;
-            --success: #4CAF50;
-            --warning: #FF9800;
-            --danger: #F44336;
-            --info: #2196F3;
-        }
-
-        /* All existing CSS stays the same - truncated for brevity */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #EFDEBB;
-            color: var(--dark-gray);
-        }
-
-        /* Rest of the CSS remains the same */
-        /* ... full CSS from original document ... */
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <div class="header">
-        <div class="logo">AutoServe</div>
-        <div class="nav-links">
-            <a href="#"><i class="fas fa-home"></i> <span>Home</span></a>
-            <a href="#"><i class="fas fa-car-alt"></i> <span>Services</span></a>
-            <a href="#"><i class="fas fa-info-circle"></i> <span>About</span></a>
-            <a href="#"><i class="fas fa-phone"></i> <span>Contact</span></a>
-            <a href="#"><i class="fas fa-user"></i></a>
-        </div>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Loan Steps
+  </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+    .step-icon {
+      border: 4px solid #fd7e14;
+      border-radius: 50%;
+      padding: 1.5rem;
+      display: inline-block;
+      transition: all 0.3s ease; /* Smooth transition */
+    }
+    /* Default icon color */
+    .step-icon i {
+      color: #000000;
+      transition: color 0.3s ease; /* Smooth color transition */
+    }
+    /* Hover effect */
+    .step-icon:hover i {
+      color: #fd7e14; /* Changes to orange on hover */
+    }
+    .text-orange-600 { color: #fd7e14; }
+    .text-blue-900 { color: #1e3a8a; }
+  </style>
+ </head>
+ <body class="bg-white">
+  <main class="py-5">
+    <div class="container text-center">
+     <h2 class="text-orange-600 small">
+      How It Works
+     </h2>
+     <h1 class="display-6 fw-bold text-blue-900 mt-2">
+      Book Your Car Service In 3 Easy Steps
+     </h1>
+     <div class="row justify-content-center mt-5">
+      <div class="col-md-4 text-center mb-4 mb-md-0">
+        <div class="step-icon mb-4">
+            <i class="bi bi-wrench fs-2"></i>
+          </div>
+       <h3 class="h4 fw-bold text-blue-900">
+        Select Your Service
+       </h3>
+       <p class="text-muted mx-auto" style="max-width: 20rem;">
+        Choose the type of car service you need, from oil changes to full maintenance.
+       </p>
+      </div>
+      <div class="col-md-4 text-center mb-4 mb-md-0">
+        <div class="step-icon mb-4">
+            <i class="bi bi-calendar-check fs-2"></i>
+          </div>
+       <h3 class="h4 fw-bold text-blue-900">
+        Pick a Date & Time
+       </h3>
+       <p class="text-muted mx-auto" style="max-width: 20rem;">
+        Schedule your appointment at a time that works best for you.
+       </p>
+      </div>
+      <div class="col-md-4 text-center mb-4 mb-md-0">
+        <div class="step-icon mb-4">
+            <i class="bi bi-check-circle fs-2"></i>
+          </div>
+       <h3 class="h4 fw-bold text-blue-900">
+        Confirm Your Booking
+       </h3>
+       <p class="text-muted mx-auto" style="max-width: 20rem;">
+        Get instant confirmation and reminders for your car service appointment.
+       </p>
+      </div>
+     </div>
     </div>
-    
-    <!-- Main Content -->
-    <div class="container">
-        <h1 class="page-title">Your Profile</h1>
-        
-        <div class="profile-grid">
-            <!-- Sidebar -->
-            <div class="profile-sidebar">
-                <div class="profile-avatar">
-                    <div id="profileAvatarWrapper" class="avatar-wrapper">
-                        <img src="/api/placeholder/300/300" alt="User Avatar">
-                        <div class="change-avatar" onclick="openAvatarModal()">
-                            <i class="fas fa-camera"></i>
-                        </div>
-                    </div>
-                    <div class="profile-name">John Smith</div>
-                    <div class="membership-status">Premium Member</div>
-                </div>
-                
-                <div class="profile-menu">
-                    <a href="#" class="menu-item active" onclick="showTab('profile')">
-                        <i class="fas fa-user"></i>
-                        <span>Profile Information</span>
-                    </a>
-                    <a href="#" class="menu-item" onclick="showTab('services')">
-                        <i class="fas fa-car"></i>
-                        <span>Current Services</span>
-                    </a>
-                    <a href="#" class="menu-item" onclick="showTab('history')">
-                        <i class="fas fa-history"></i>
-                        <span>Service History</span>
-                    </a>
-                    <a href="#" class="menu-item" onclick="showTab('invoices')">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                        <span>Invoices</span>
-                    </a>
-                    <a href="#" class="menu-item" onclick="showTab('vehicles')">
-                        <i class="fas fa-car-alt"></i>
-                        <span>Your Vehicles</span>
-                    </a>
-                    <a href="#" class="menu-item">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Content Area -->
-            <div class="profile-content">
-                <!-- Various tabs (Profile, Services, History, Invoices, Vehicles) remain the same as in the original document -->
-                <!-- Content truncated for brevity, but all original HTML is preserved -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Modals -->
-    <!-- Avatar Selection Modal -->
-    <div class="modal-overlay" id="avatarModal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <div class="modal-title">Choose Avatar</div>
-                <button class="modal-close" onclick="closeModal('avatarModal')" aria-label="Close Avatar Modal">×</button>
-            </div>
-            <div class="modal-body">
-                <!-- Avatar Selection Content Goes Here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- OTP Verification Modal -->
-    <div class="modal-overlay" id="otpModal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <div class="modal-title">Verify OTP</div>
-                <button class="modal-close" onclick="closeModal('otpModal')" aria-label="Close OTP Modal">×</button>
-            </div>
-            <div class="modal-body">
-                <p>Enter the 6-digit verification code sent to your <span id="verificationChannel"></span></p>
-                <div class="otp-input-container">
-                    <input type="text" maxlength="1" class="otp-input">
-                    <input type="text" maxlength="1" class="otp-input">
-                    <input type="text" maxlength="1" class="otp-input">
-                    <input type="text" maxlength="1" class="otp-input">
-                    <input type="text" maxlength="1" class="otp-input">
-                    <input type="text" maxlength="1" class="otp-input">
-                </div>
-                <div class="resend-otp">
-                    <a href="#">Resend OTP</a>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeModal('otpModal')">Cancel</button>
-                <button class="btn btn-primary">Verify</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function showTab(tabName) {
-            // Hide all tab contents
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
-
-            // Hide all menu items
-            const menuItems = document.querySelectorAll('.menu-item');
-            menuItems.forEach(item => item.classList.remove('active'));
-
-            // Show selected tab
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-
-            // Highlight selected menu item
-            const activeMenuItem = document.querySelector(`.menu-item[onclick="showTab('${tabName}')"]`);
-            activeMenuItem.classList.add('active');
-        }
-
-        function openAvatarModal() {
-            document.getElementById('avatarModal').classList.add('active');
-        }
-
-        function openVerifyModal(channel) {
-            document.getElementById('verificationChannel').textContent = channel;
-            document.getElementById('otpModal').classList.add('active');
-        }
-
-        function openAddVehicleModal() {
-            // Placeholder for add vehicle modal functionality
-            alert('Add Vehicle Modal - To be implemented');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        // OTP Input Auto Focus
-        const otpInputs = document.querySelectorAll('.otp-input');
-        otpInputs.forEach((input, index) => {
-            input.addEventListener('input', (e) => {
-                if (e.target.value.length === 1 && index < otpInputs.length - 1) {
-                    otpInputs[index + 1].focus();
-                }
-            });
-
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) {
-                    otpInputs[index - 1].focus();
-                }
-            });
-        });
-    </script>
-</body>
+ </main>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+ </body>
 </html>
