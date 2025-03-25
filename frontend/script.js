@@ -13,3 +13,4 @@ document.querySelector('form').addEventListener('submit', function(e) {
     e.preventDefault();
     alert('Service booking submitted successfully!');
 });
+

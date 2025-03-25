@@ -1,94 +1,282 @@
+:root {
+    --primary: #722F38;
+    --primary-light: #8C4049;
+    --secondary: #EFDEBB;
+    --secondary-dark: #DAC9A6;
+    --white: #FFFFFF;
+    --light-gray: #F5F5F5;
+    --medium-gray: #E0E0E0;
+    --dark-gray: #333333;
+    --success: #4CAF50;
+    --warning: #FF9800;
+    --danger: #F44336;
+    --info: #2196F3;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Urbanist', 'Russo One', sans-serif;
+}
+
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
+    background-color: var(--secondary);
+    color: var(--dark-gray);
 }
 
-.glassmorphic {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+/* Typography and Brand Styling */
+#brand-name, .logo {
+    font-family: 'Russo One', sans-serif;
+    color: var(--white);
 }
 
-.navbar {
-    background-color: #722F38 !important;
-}
-
-.navbar .nav-link, .navbar .btn-outline-light {
-    color: #EFDEBB;
-    transition: color 0.3s ease;
-}
-
-.navbar .nav-link:hover, .navbar .btn-outline-light:hover {
-    color: #fff;
-}
-
-.btn-book {
-    background-color: #EFDEBB;
-    color: #722F38;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-.btn-book:hover {
-    background-color: #fff;
-    color: #722F38;
-}
-
-.hero-section {
-    height: 100vh;
-    background: url('service-center.jpg') no-repeat center center/cover;
-    position: relative;
-}
-
-.hero-section::before {
-    content: '';
-    position: absolute;
+/* Header Styles */
+.main-header, .header {
+    background-color: var(--primary);
+    color: var(--white);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
     top: 0;
-    left: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+/* Navigation Styles */
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.nav-links a:hover {
+    color: var(--secondary);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.book-btn {
+    background-color: var(--secondary);
+    color: var(--primary);
+    border-radius: 5px;
+}
+
+.book-btn:hover {
+    background-color: var(--white);
+}
+
+/* Container and Layout */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Form Styles */
+.glassmorphic-form {
+    background-color: var(--secondary);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.form-container {
+    max-width: 800px;
+    background: rgba(255, 255, 255, 0.9);
+    width: 100%;
+    padding: 25px 40px 10px 40px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    margin: 0 auto;
+}
+
+.input-data input,
+.input-data select {
+    display: block;
     width: 100%;
     height: 100%;
-    background: rgba(114, 47, 56, 0.5);
+    border: none;
+    font-size: 17px;
+    background: none;
+    border-bottom: 2px solid rgba(114, 47, 56, 0.2);
+    color: var(--primary);
+    padding: 0 5px;
 }
 
-.hero-section .container {
-    position: relative;
-    z-index: 1;
+.input-data .underline:before {
+    background: var(--primary);
 }
 
-.animate-text {
-    animation: fadeInUp 1s ease-in-out;
+.submit-btn .input-data .inner {
+    background: var(--primary);
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.submit-btn .input-data button {
+    color: var(--secondary);
 }
 
-.glassmorphic-form {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
+/* Profile Grid and Sidebar */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    background: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.profile-sidebar {
+    background-color: var(--primary);
+    color: var(--white);
     padding: 2rem;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
-.service-card {
-    padding: 2rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.service-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--white);
 }
 
-footer {
-    background-color: #722F38;
+.btn-primary:hover {
+    background-color: var(--primary-light);
+}
+
+/* Footer Styles */
+.main-footer {
+    background: rgba(114, 47, 56, 0.9);
+    backdrop-filter: blur(8px);
+    color: var(--white);
+    padding: 50px 0;
+    font-size: 14px;
+    border-top: 3px solid var(--secondary);
+}
+
+.footer-links h4, .footer-contact h4 {
+    color: var(--secondary);
+    font-weight: bold;
+}
+
+/* Carousel Styles */
+.carousel {
+    height: 100vh;
+}
+
+.carousel-item img {
+    height: 100vh;
+    object-fit: cover;
+    filter: brightness(90%);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-sidebar {
+        padding: 1.5rem;
+    }
+
+    .profile-menu {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .form-container {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header, .main-header {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .nav-links {
+        margin-top: 1rem;
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-title {
+        font-size: 30px;
+    }
+}
+
+@media (max-width: 576px) {
+    .nav-links a span {
+        display: none;
+    }
+
+    .profile-menu {
+        gap: 0.25rem;
+    }
+    
+    .menu-item {
+        padding: 0.5rem;
+    }
+
+    .menu-item span {
+        display: none;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .submit-btn .input-data {
+        width: 40%!important;
+    }
+}
+
+/* Additional Utility Classes and Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
 }

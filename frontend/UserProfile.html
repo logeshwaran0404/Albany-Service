@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AutoServe - User Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --primary: #722F38;
@@ -25,14 +32,17 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Urbanist', 'Russo One', sans-serif;
         }
 
         body {
             background-color: #EFDEBB;
             color: var(--dark-gray);
         }
-
+        .logo {
+            font-family: 'Russo One', sans-serif;
+            color: var(--white);
+        }
         .header {
             background-color: var(--primary);
             color: var(--white);
@@ -887,7 +897,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <div class="logo">AutoServe</div>
+        <div class="logo">Albany</div>
         <div class="nav-links">
             <a href="#"><i class="fas fa-home"></i> <span>Home</span></a>
             <a href="#"><i class="fas fa-car-alt"></i> <span>Services</span></a>
@@ -1289,10 +1299,8 @@
                 <button class="modal-close" onclick="closeModal('otpModal')" aria-label="Close OTP Modal">×</button>
             </div>
             <div class="modal-body">
-                <p>Enter the 6-digit verification code sent to your <span id="verificationChannel"></span></p>
+                <p>Enter the 4-digit verification code sent to your <span id="verificationChannel"></span></p>
                 <div class="otp-input-container">
-                    <input type="text" maxlength="1" class="otp-input">
-                    <input type="text" maxlength="1" class="otp-input">
                     <input type="text" maxlength="1" class="otp-input">
                     <input type="text" maxlength="1" class="otp-input">
                     <input type="text" maxlength="1" class="otp-input">
