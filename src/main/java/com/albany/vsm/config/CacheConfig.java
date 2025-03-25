@@ -36,7 +36,12 @@ public class CacheConfig {
     @Scheduled(fixedRate = 300000) // 5 minutes in milliseconds
     public void evictExpiredOtps() {
         // This will clear the entire cache every 5 minutes
-        ((ConcurrentMapCacheManager) cacheManager()).getCache("otpCache").clear();
-        ((ConcurrentMapCacheManager) cacheManager()).getCache("registrationCache").clear();
+        CacheManager manager = cacheManager();
+        if (manager.getCache("otpCache") != null) {
+            manager.getCache("otpCache").clear();
+        }
+        if (manager.getCache("registrationCache") != null) {
+            manager.getCache("registrationCache").clear();
+        }
     }
 }

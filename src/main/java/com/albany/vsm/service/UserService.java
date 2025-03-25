@@ -1,116 +1,146 @@
 package com.albany.vsm.service;
 
-import com.albany.vsm.exception.UserAlreadyExistsException;
-import com.albany.vsm.exception.UserNotFoundException;
+import com.albany.vsm.dto.InitialLoginRequest;
+import com.albany.vsm.dto.InitialRegistrationRequest;
+import com.albany.vsm.dto.LoginResponse;
+import com.albany.vsm.dto.RegistrationResponse;
+import com.albany.vsm.dto.VerifyOtpRequest;
+import com.albany.vsm.exception.UserException;
 import com.albany.vsm.model.User;
 import com.albany.vsm.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service for user operations
- */
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
-@RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final OtpService otpService;
+    private final CacheManager cacheManager;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       OtpService otpService, CacheManager cacheManager) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.otpService = otpService;
+        this.cacheManager = cacheManager;
+    }
 
     /**
-     * Register a new customer
-     * This is the public registration method for customers only
-     *
-     * @param name User's full name
-     * @param email User's email
-     * @param mobileNumber User's mobile number
-     * @param password User's password (will be hashed)
-     * @return The registered user
-     * @throws UserAlreadyExistsException if a user with the email or mobile number already exists
+     * First step of registration: store user data in cache and send OTP
      */
-    public User registerCustomer(String name, String email, String mobileNumber, String password) {
-        // Check if user already exists
-        if (userRepository.existsByEmail(email)) {
-            throw new UserAlreadyExistsException("User with this email already exists");
+    public boolean initiateRegistration(InitialRegistrationRequest request) {
+        // Check if email or mobile already exists
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new UserException("Email already registered");
+        }
+        if (userRepository.existsByMobileNumber(request.getMobileNumber())) {
+            throw new UserException("Mobile number already registered");
         }
 
-        if (userRepository.existsByMobileNumber(mobileNumber)) {
-            throw new UserAlreadyExistsException("User with this mobile number already exists");
+        // Store registration data in cache
+        Cache registrationCache = cacheManager.getCache("registrationCache");
+        registrationCache.put(request.getEmail(), request);
+
+        // Generate and send OTP
+        otpService.generateAndSendOtp(request.getEmail());
+        return true;
+    }
+
+    /**
+     * Second step of registration: verify OTP and create user
+     */
+    @Transactional
+    public RegistrationResponse completeRegistration(VerifyOtpRequest request) {
+        // Verify OTP
+        if (!otpService.verifyOtp(request.getEmail(), request.getOtp())) {
+            throw new UserException("Invalid or expired OTP");
         }
 
-        // Create a new user with customer role
+        // Get registration data from cache
+        Cache registrationCache = cacheManager.getCache("registrationCache");
+        Cache.ValueWrapper valueWrapper = registrationCache.get(request.getEmail());
+
+        if (valueWrapper == null) {
+            throw new UserException("Registration session expired");
+        }
+
+        InitialRegistrationRequest registrationData =
+                (InitialRegistrationRequest) valueWrapper.get();
+
+        // Create user
         User user = new User();
-        user.setName(name);
-        user.setEmail(email);
-        user.setMobileNumber(mobileNumber);
-        user.setPassword(hashPassword(password));
-        user.setRole(User.Role.customer); // Always set role to 'customer' for public registration
+        user.setName(registrationData.getName());
+        user.setEmail(registrationData.getEmail());
+        user.setMobileNumber(registrationData.getMobileNumber());
+        user.setPassword(passwordEncoder.encode(registrationData.getPassword()));
+        user.setRole(User.UserRole.customer);  // Default role for registration
 
-        // Save and return the user
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // Clear cache
+        otpService.clearOtp(request.getEmail());
+        registrationCache.evict(request.getEmail());
+
+        // Return response
+        RegistrationResponse response = new RegistrationResponse();
+        response.setUserId(savedUser.getId());
+        response.setEmail(savedUser.getEmail());
+        response.setName(savedUser.getName());
+        response.setMessage("Registration successful");
+
+        return response;
     }
 
     /**
-     * Create a new admin or service advisor
-     * This method should only be accessible to admin users
-     *
-     * @param name User's full name
-     * @param email User's email
-     * @param mobileNumber User's mobile number
-     * @param password User's password (will be hashed)
-     * @param role The role (admin or serviceadvisor)
-     * @return The created user
-     * @throws UserAlreadyExistsException if a user with the email or mobile number already exists
-     * @throws IllegalArgumentException if the role is not valid
+     * First step of login: send OTP to user email
      */
-    public User createStaffUser(String name, String email, String mobileNumber, String password, User.Role role) {
-        // Check if user already exists
-        if (userRepository.existsByEmail(email)) {
-            throw new UserAlreadyExistsException("User with this email already exists");
+    public boolean initiateLogin(InitialLoginRequest request) {
+        Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
+
+        if (userOpt.isEmpty()) {
+            throw new UserException("User not found");
         }
 
-        if (userRepository.existsByMobileNumber(mobileNumber)) {
-            throw new UserAlreadyExistsException("User with this mobile number already exists");
+        // Generate and send OTP
+        otpService.generateAndSendOtp(request.getEmail());
+        return true;
+    }
+
+    /**
+     * Second step of login: verify OTP and create session
+     */
+    public LoginResponse completeLogin(VerifyOtpRequest request) {
+        // Verify OTP
+        if (!otpService.verifyOtp(request.getEmail(), request.getOtp())) {
+            throw new UserException("Invalid or expired OTP");
         }
 
-        // Validate role - only admin and serviceadvisor allowed
-        if (role == User.Role.customer) {
-            throw new IllegalArgumentException("Use registerCustomer method for customer registration");
-        }
+        // Get user
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UserException("User not found"));
 
-        // Create a new user with the specified role
-        User user = new User();
-        user.setName(name);
-        user.setEmail(email);
-        user.setMobileNumber(mobileNumber);
-        user.setPassword(hashPassword(password));
-        user.setRole(role);
+        // Clear OTP
+        otpService.clearOtp(request.getEmail());
 
-        // Save and return the user
-        return userRepository.save(user);
-    }
+        // Generate session token (simple UUID for now)
+        String token = UUID.randomUUID().toString();
 
-    /**
-     * Hash password using a simple algorithm (for demonstration only)
-     * In production, use BCrypt or another secure hashing algorithm
-     */
-    private String hashPassword(String password) {
-        // This is just a placeholder - in a real application, use BCrypt
-        // For example: return BCrypt.hashpw(password, BCrypt.gensalt());
-        return password; // NOT SECURE - only for testing
-    }
+        // Build response
+        LoginResponse response = new LoginResponse();
+        response.setUserId(user.getId());
+        response.setName(user.getName());
+        response.setEmail(user.getEmail());
+        response.setRole(user.getRole().toString());
+        response.setToken(token);
+        response.setMessage("Login successful");
 
-    /**
-     * Check if a user exists by email
-     */
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    /**
-     * Get user by email
-     */
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-            .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+        return response;
     }
 }
