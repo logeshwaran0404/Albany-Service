@@ -1,107 +1,43 @@
 package com.albany.vsm.controller;
 
-import com.albany.vsm.dto.OtpRequestDto;
-import com.albany.vsm.dto.OtpVerificationDto;
-import com.albany.vsm.exception.OtpVerificationException;
-import com.albany.vsm.exception.UserNotFoundException;
-import com.albany.vsm.service.OtpService;
-import com.albany.vsm.repository.UserRepository;
+import com.albany.vsm.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 /**
- * Controller for login process
+ * Controller for handling user authentication via Email OTP
  */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final OtpService otpService;
-    private final UserRepository userRepository;
+    private final AuthService authService;
 
     /**
-     * Request OTP for login
+     * Step 1: Initiates login by sending OTP to the provided email
+     * @param request containing user email
+     * @return message indicating OTP has been sent
      */
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody OtpRequestDto request) {
-        try {
-            // Check if user exists
-            if (!userRepository.existsByEmail(request.getEmail())) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(
-                        "message", "User not found", 
-                        "success", false
-                    ));
-            }
-            
-            // Send OTP
-            otpService.sendOtp(request.getEmail());
-            
-            return ResponseEntity.ok(Map.of(
-                "message", "OTP sent successfully to " + request.getEmail(), 
-                "success", true
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of(
-                    "message", "Failed to send OTP: " + e.getMessage(), 
-                    "success", false
-                ));
-        }
+    @PostMapping("/login/email")
+    public ResponseEntity<String> initiateEmailLogin(@Valid @RequestBody EmailLoginRequest request) {
+        authService.sendLoginOtp(request.getEmail());
+        return ResponseEntity.ok("OTP sent to your email. Valid for 5 minutes.");
     }
 
     /**
-     * Verify OTP for login
+     * Step 2: Verifies the OTP and completes the login process
+     * @param request containing email and OTP
+     * @return user details with authentication token
      */
-    @PostMapping("/verify")
-    public ResponseEntity<?> verifyLogin(@RequestBody OtpVerificationDto request) {
-        try {
-            // Check if user exists
-            if (!userRepository.existsByEmail(request.getEmail())) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(
-                        "message", "User not found", 
-                        "success", false
-                    ));
-            }
-            
-            // Verify OTP
-            boolean isValid = otpService.verifyOtp(request.getEmail(), request.getOtp());
-            
-            if (isValid) {
-                // In a real app, you would create a session or token here
-                return ResponseEntity.ok(Map.of(
-                    "message", "Login successful", 
-                    "email", request.getEmail(),
-                    "success", true
-                ));
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of(
-                        "message", "Invalid OTP", 
-                        "success", false
-                    ));
-            }
-        } catch (OtpVerificationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of(
-                    "message", e.getMessage(), 
-                    "success", false
-                ));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of(
-                    "message", "Error during verification: " + e.getMessage(), 
-                    "success", false
-                ));
-        }
+    @PostMapping("/verify-otp")
+    public ResponseEntity<UserResponseDTO> verifyOtp(@Valid @RequestBody OtpVerificationRequest request) {
+        UserResponseDTO response = authService.verifyOtpAndLogin(request.getEmail(), request.getOtp());
+        return ResponseEntity.ok(response);
     }
 }

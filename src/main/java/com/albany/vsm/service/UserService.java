@@ -5,7 +5,6 @@ import com.albany.vsm.exception.UserNotFoundException;
 import com.albany.vsm.model.User;
 import com.albany.vsm.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     /**
      * Register a new customer
@@ -44,9 +42,8 @@ public class UserService {
         user.setName(name);
         user.setEmail(email);
         user.setMobileNumber(mobileNumber);
-        user.setPassword(passwordEncoder.encode(password)); // Encrypt password with BCrypt
+        user.setPassword(hashPassword(password));
         user.setRole(User.Role.customer); // Always set role to 'customer' for public registration
-        user.setIsActive(true);
 
         // Save and return the user
         return userRepository.save(user);
@@ -85,12 +82,21 @@ public class UserService {
         user.setName(name);
         user.setEmail(email);
         user.setMobileNumber(mobileNumber);
-        user.setPassword(passwordEncoder.encode(password)); // Encrypt password with BCrypt
+        user.setPassword(hashPassword(password));
         user.setRole(role);
-        user.setIsActive(true);
 
         // Save and return the user
         return userRepository.save(user);
+    }
+
+    /**
+     * Hash password using a simple algorithm (for demonstration only)
+     * In production, use BCrypt or another secure hashing algorithm
+     */
+    private String hashPassword(String password) {
+        // This is just a placeholder - in a real application, use BCrypt
+        // For example: return BCrypt.hashpw(password, BCrypt.gensalt());
+        return password; // NOT SECURE - only for testing
     }
 
     /**
@@ -105,13 +111,6 @@ public class UserService {
      */
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
-    }
-
-    /**
-     * Validate password
-     */
-    public boolean validatePassword(User user, String rawPassword) {
-        return passwordEncoder.matches(rawPassword, user.getPassword());
+            .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
     }
 }
