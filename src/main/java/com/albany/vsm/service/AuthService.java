@@ -229,4 +229,43 @@ public class AuthService {
 
         return body.toString();
     }
+
+    /**
+     * Login with email and password
+     * @param email User's email
+     * @param password Raw password
+     * @return Optional User if authentication is successful
+     */
+    public Optional<User> login(String email, String password) {
+        return userRepository.findByEmail(email).filter(user ->
+                passwordEncoder.matches(password, user.getPassword())
+        );
+    }
+
+    /**
+     * Check if a user has admin role
+     * @param user User to check
+     * @return True if user is admin, false otherwise
+     */
+    public boolean isAdmin(User user) {
+        return user != null && "admin".equals(user.getRole());
+    }
+
+    /**
+     * Check if a user has service advisor role
+     * @param user User to check
+     * @return True if user is service advisor, false otherwise
+     */
+    public boolean isServiceAdvisor(User user) {
+        return user != null && "serviceadvisor".equals(user.getRole());
+    }
+
+    /**
+     * Check if a user has customer role
+     * @param user User to check
+     * @return True if user is customer, false otherwise
+     */
+    public boolean isCustomer(User user) {
+        return user != null && "customer".equals(user.getRole());
+    }
 }

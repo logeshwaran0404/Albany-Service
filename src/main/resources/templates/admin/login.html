@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login - Albany</title>
+    <!-- Bootstrap CSS -->
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+            rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+            rel="stylesheet"
+    />
+    <!-- Google Fonts - Baloo Bhaijaan 2 -->
+    <link
+            href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+    />
+    <style>
+        :root {
+            --primary-color: #EFFBBB; /* Dutch White */
+            --secondary-color: #722F37; /* Wine */
+            --text-dark: #2D2D2D;
+            --text-light: #FFFFFF;
+            --accent-gold: #D4AF37;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Baloo Bhaijaan 2', cursive;
+            height: 100vh;
+            background-color: var(--secondary-color);
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #722F37 0%, #501922 100%);
+        }
+
+        /* Fade-in animation for container */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            opacity: 0.1;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .login-container {
+            width: 90%;
+            max-width: 1200px;
+            background-color: var(--text-light);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Premium Gradient Border */
+        .login-container::before {
+            content: "";
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            z-index: -1;
+            border-radius: inherit;
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-gold));
+        }
+
+        .login-row {
+            min-height: 600px;
+            display: flex;
+        }
+
+        .login-panel {
+            flex: 1;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            background-color: var(--text-light);
+        }
+
+        .brand-corner {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.8rem;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .brand-text {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            letter-spacing: -0.5px;
+        }
+
+        .login-header {
+            margin-bottom: 3rem;
+        }
+
+        .login-title {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .login-title span {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--accent-gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            font-size: 1.1rem;
+            color: #777;
+            line-height: 1.6;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            left: 1.2rem;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 1.2rem;
+            z-index: 10;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1.2rem 1.2rem 1.2rem 3rem;
+            font-size: 1rem;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            background-color: #fafafa;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+            background-color: white;
+        }
+
+        .form-label {
+            position: absolute;
+            top: 0;
+            left: 3rem;
+            font-size: 0.85rem;
+            background-color: white;
+            padding: 0 0.5rem;
+            transform: translateY(-50%);
+            color: #888;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 1.2rem;
+            transform: translateY(-50%);
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1.1rem;
+            z-index: 5;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--accent-gold);
+        }
+
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+
+        .remember-checkbox {
+            width: 1.2rem;
+            height: 1.2rem;
+            margin-right: 0.5rem;
+            accent-color: var(--accent-gold);
+        }
+
+        .remember-text {
+            font-size: 0.95rem;
+            color: #888;
+        }
+
+        .forgot-link {
+            font-size: 0.95rem;
+            color: var(--accent-gold);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+            color: var(--secondary-color);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1.2rem;
+            border: none;
+            border-radius: 12px;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(114, 47, 55, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login:hover {
+            background-color: #621f27;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(114, 47, 55, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
+            z-index: 1;
+        }
+
+        .btn-login span {
+            position: relative;
+            z-index: 2;
+        }
+
+        .image-panel {
+            flex: 1;
+            background-color: var(--primary-color);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /*background-image: url('/api/placeholder/800/600');*/
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2;
+            z-index: 1;
+        }
+
+        .image-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .image-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .feature-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            border-radius: 50%;
+            margin-right: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .pattern-circles {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            top: -250px;
+            right: -250px;
+            border-radius: 50%;
+            border: 40px solid rgba(114, 47, 55, 0.1);
+            z-index: 1;
+        }
+
+        .pattern-circles::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            top: 60px;
+            left: 60px;
+            border-radius: 50%;
+            border: 40px solid rgba(114, 47, 55, 0.1);
+        }
+
+        .pattern-dots {
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            background-image: radial-gradient(var(--secondary-color) 2px, transparent 2px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+            z-index: 1;
+        }
+
+        @media (max-width: 991.98px) {
+            .login-row {
+                flex-direction: column;
+            }
+
+            .login-panel,
+            .image-panel {
+                padding: 3rem;
+            }
+
+            .image-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .login-container {
+                width: 95%;
+                border-radius: 20px;
+            }
+
+            .login-panel {
+                padding: 2rem;
+            }
+
+            .brand-corner {
+                top: 1.5rem;
+                left: 1.5rem;
+            }
+
+            .login-title {
+                font-size: 2.5rem;
+            }
+
+            .login-title span {
+                font-size: 1.2rem;
+            }
+
+            .login-options {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .pattern-circles {
+                width: 300px;
+                height: 300px;
+                top: -150px;
+                right: -150px;
+                border-width: 20px;
+            }
+
+            .pattern-circles::before {
+                width: 180px;
+                height: 180px;
+                top: 40px;
+                left: 40px;
+                border-width: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Particles Background -->
+<div class="particles" id="particles"></div>
+
+<div class="login-container">
+    <div class="login-row">
+        <div class="login-panel">
+            <div class="brand-corner">
+                <!-- <div class="brand-icon">
+                  <i class="fas fa-car-alt"></i>
+                </div> -->
+                <div class="brand-text">ALBANY</div>
+            </div>
+
+            <div class="pattern-circles"></div>
+            <div class="pattern-dots"></div>
+
+            <div class="login-header">
+                <h1 class="login-title">
+                    <span>System Access</span> Admin Portal
+                </h1>
+                <p class="login-subtitle">
+                    Enter your credentials to access the administrative dashboard and
+                    manage all system operations.
+                </p>
+            </div>
+
+            <form id="loginForm">
+                <div class="input-group">
+                    <i class="input-icon fas fa-envelope"></i>
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="email" required />
+                </div>
+
+                <div class="input-group">
+                    <i class="input-icon fas fa-lock"></i>
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="password" required />
+                    <span class="password-toggle" id="togglePassword">
+              <i class="fas fa-eye" id="eyeIcon"></i>
+            </span>
+                </div>
+
+                <div class="login-options">
+                    <div class="remember-me">
+                        <input type="checkbox" class="remember-checkbox" id="rememberMe" />
+                        <label for="rememberMe" class="remember-text">Keep me signed in</label>
+                    </div>
+
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <span>Sign In to Dashboard</span>
+                </button>
+            </form>
+        </div>
+
+        <div class="image-panel">
+            <div class="image-content">
+                <span class="admin-badge">ADMINISTRATOR</span>
+                <h2 class="image-title">
+                    Complete Control of Your Vehicle Service Operations
+                </h2>
+
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <span>System Dashboard &amp; Analytics</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <span>User Account Management</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <span>Service Configuration</span>
+                    </li>
+                    <li class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <span>Financial Reports &amp; Invoicing</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Bundle with Popper -->
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"
+></script>
+<!-- Custom JS -->
+<script src="/static/js/admin/login.js"></script>
+</body>
+</html>
