@@ -4,7 +4,7 @@ import com.albany.vsm.dto.AdminLoginRequest;
 import com.albany.vsm.dto.ApiResponse;
 import com.albany.vsm.dto.CustomerLoginRequest;
 import com.albany.vsm.dto.VerifyOtpRequest;
-import com.albany.vsm.entity.User;
+import com.albany.vsm.model.User;
 import com.albany.vsm.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;

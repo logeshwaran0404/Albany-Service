@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
 
                         // Redirect to dashboard
-                        window.location.href = '/admin/dashboard';
+                        window.location.href = '/';
                     } else {
                         // Show error
                         showError(data.message || 'Login failed. Please try again.');

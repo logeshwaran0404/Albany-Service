@@ -1,6 +1,6 @@
 package com.albany.vsm.repository;
 
-import com.albany.vsm.entity.User;
+import com.albany.vsm.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

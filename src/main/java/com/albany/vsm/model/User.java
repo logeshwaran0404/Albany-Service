@@ -1,4 +1,4 @@
-package com.albany.vsm.entity;
+package com.albany.vsm.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,19 +36,13 @@ public class User {
     @Column(nullable = false)
     private String role;
 
-    // Add the is_active field
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true; // Set default value to true
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @PrePersist
-    public void prePersist() {
-        createdAt = LocalDateTime.now();
-        // Ensure is_active is set before persisting
-        if (isActive == null) {
-            isActive = true;
-        }
+    public enum Role {
+        admin,
+        serviceadvisor,
+        customer
     }
+
 }

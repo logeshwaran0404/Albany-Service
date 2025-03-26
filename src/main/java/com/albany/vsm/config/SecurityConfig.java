@@ -15,21 +15,27 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())  // Disable CSRF for API endpoints
+                .csrf(csrf -> csrf.disable())  // Disable CSRF for simplicity (not recommended for production)
                 .authorizeHttpRequests(auth -> auth
-                        // Allow all auth-related endpoints
-                        .requestMatchers("/auth/**", "/api/auth/**", "/").permitAll()
-                        // Allow static resources
-                        .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**", "/webjars/**").permitAll()
-                        // Protect admin endpoints
-                        .requestMatchers("/admin/**").hasRole("admin")
-                        // Protect customer endpoints
-                        .requestMatchers("/customer/**").hasRole("customer")
-                        // All other requests need authentication
+                        // Public routes
+                        .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll()
+
+                        // Admin routes
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        // Require authentication for other routes
                         .anyRequest().authenticated()
                 )
-                // Not using form login, we have our own login pages
-                .formLogin(form -> form.disable());
+                // Configure form login
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/admin/dashboard", true)
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login")
+                        .permitAll()
+                );
 
         return http.build();
     }
